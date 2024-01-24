@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  
+  
+  
+  <entry>
+    <title>CentOS 7 安装MySQL 8.0并开启远程访问</title>
+    <link href="/2024/01/23/install-MySQL-8-0-on-CentOS/"/>
+    <url>/2024/01/23/install-MySQL-8-0-on-CentOS/</url>
+    
+    <content type="html"><![CDATA[<h1 id="1-检查MariaDB"><a href="#1-检查MariaDB" class="headerlink" title="1.检查MariaDB"></a>1.检查MariaDB</h1><p>检查是否已安装MariaDB并删除</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">rpm -qa | grep mariadb</span><br><span class="line">rpm -e --nodeps mariadb-libs-5.5.64-1.el7.x86_64</span><br></pre></td></tr></table></figure><h1 id="2-安装"><a href="#2-安装" class="headerlink" title="2.安装"></a>2.安装</h1><p>下载安装包并解压</p><p>官方地址：<a href="https://dev.mysql.com/downloads/mysql/">https://dev.mysql.com/downloads/mysql/</a></p><p>华为镜像站：<a href="https://mirrors.huaweicloud.com/mysql/">https://mirrors.huaweicloud.com/mysql/</a></p><p>依次下载rpm包</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">wget https://mirrors.huaweicloud.com/mysql/Downloads/MySQL-8.0/mysql-community-common-8.0.19-1.el7.x86_64.rpm</span><br><span class="line">wget https://mirrors.huaweicloud.com/mysql/Downloads/MySQL-8.0/mysql-community-libs-8.0.19-1.el7.x86_64.rpm</span><br><span class="line">wget https://mirrors.huaweicloud.com/mysql/Downloads/MySQL-8.0/mysql-community-client-8.0.19-1.el7.x86_64.rpm</span><br><span class="line">wget https://mirrors.huaweicloud.com/mysql/Downloads/MySQL-8.0/mysql-community-server-8.0.19-1.el7.x86_64.rpm</span><br></pre></td></tr></table></figure><p>下载完成后依次安装：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">rpm -ivh mysql-community-common-8.0.19-1.el7.x86_64.rpm</span><br><span class="line">rpm -ivh mysql-community-libs-8.0.19-1.el7.x86_64.rpm</span><br><span class="line">rpm -ivh mysql-community-client-8.0.19-1.el7.x86_64.rpm</span><br><span class="line">rpm -ivh mysql-community-server-8.0.19-1.el7.x86_64.rpm</span><br></pre></td></tr></table></figure><p>安装时可能缺少依赖，安装一下包即可：</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install -y numactl</span><br></pre></td></tr></table></figure><p>安装完成</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql --version</span><br></pre></td></tr></table></figure><h1 id="3-服务启停"><a href="#3-服务启停" class="headerlink" title="3.服务启停"></a>3.服务启停</h1><p>启动服务</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl start mysqld</span><br></pre></td></tr></table></figure><p>查看服务状态</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl status mysqld</span><br></pre></td></tr></table></figure><h1 id="4-数据库操作"><a href="#4-数据库操作" class="headerlink" title="4.数据库操作"></a>4.数据库操作</h1><p>查看临时密码</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> /var/log/mysqld.log</span><br></pre></td></tr></table></figure><p>用临时密码登录数据库</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql -u root -p</span><br></pre></td></tr></table></figure><p>修改MySQL密码</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">alter USER &#x27;root&#x27;@&#x27;localhost&#x27; IDENTIFIED BY &#x27;密码&#x27;;</span><br></pre></td></tr></table></figure><p>开启远程访问（适用于MySQL8.0以后版本）</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">CREATE USER &#x27;root&#x27;@&#x27;%&#x27; IDENTIFIED BY &#x27;密码&#x27;; </span><br><span class="line">GRANT ALL ON *.* TO &#x27;root&#x27;@&#x27;%&#x27;; </span><br><span class="line">ALTER USER &#x27;root&#x27;@&#x27;%&#x27; IDENTIFIED WITH mysql_native_password BY &#x27;密码&#x27;;</span><br><span class="line">FLUSH PRIVILEGES;</span><br><span class="line"></span><br></pre></td></tr></table></figure>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>Linux</tag>
+      
+      <tag>MySQL</tag>
+      
+      <tag>部署</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>正则表达式语法</title>
+    <link href="/2024/01/23/regular-expression/"/>
+    <url>/2024/01/23/regular-expression/</url>
+    
+    <content type="html"><![CDATA[<h1 id="1-单个字符"><a href="#1-单个字符" class="headerlink" title="1.单个字符"></a>1.单个字符</h1><table><thead><tr><th>占位符</th><th>解释</th></tr></thead><tbody><tr><td>.</td><td>任意<strong>一个</strong>字符（换行符\n除外）</td></tr><tr><td>[]</td><td>匹配括号中的一个字符</td></tr><tr><td>\d</td><td>匹配数字，即0-9</td></tr><tr><td>\D</td><td>匹配非数字，即不是数字</td></tr><tr><td>\s</td><td>匹配空白，即 空格，tab键</td></tr><tr><td>\S</td><td>匹配非空白</td></tr><tr><td>\w</td><td>匹配非特殊字符，即a-z、A-Z、0-9、_、汉字 ,其中汉字可以用[\u4e00-\u9fa5]匹配</td></tr><tr><td>\W</td><td>匹配特殊字符，即非字母、非数字、非汉字</td></tr></tbody></table><h1 id="2-匹配多个字符的功能占位符"><a href="#2-匹配多个字符的功能占位符" class="headerlink" title="2.匹配多个字符的功能占位符"></a>2.匹配多个字符的功能占位符</h1><table><thead><tr><th>占位符</th><th>解释</th></tr></thead><tbody><tr><td>*</td><td>匹配<strong>前一个字符</strong>出现0次或者无限次，即可有可无</td></tr><tr><td>+</td><td>匹配<strong>前一个字符</strong>出现1次或者无限次，即至少有1次</td></tr><tr><td>?</td><td>匹配<strong>前一个字符</strong>出现1次或者0次，即要么有1次，要么没有</td></tr><tr><td>{m}</td><td>匹配<strong>前一个字符</strong>出现m次</td></tr><tr><td>{m,n}</td><td>匹配<strong>前一个字符</strong>出现m到n次</td></tr></tbody></table><h1 id="3-特殊功能占位符"><a href="#3-特殊功能占位符" class="headerlink" title="3.特殊功能占位符"></a>3.特殊功能占位符</h1><table><thead><tr><th>占位符</th><th>解释</th></tr></thead><tbody><tr><td>^</td><td>匹配字符串开头</td></tr><tr><td>$</td><td>匹配字符串结尾</td></tr><tr><td>[^字符]</td><td>表示除了指定字符都匹配,类似取反</td></tr></tbody></table>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>开发技巧</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  
+</search>
